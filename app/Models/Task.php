@@ -12,7 +12,9 @@ class Task extends Model
 
 
     public function taskLeaderKey(): Attribute{
-        $employees=Employee::where('department','=','E')->get();
+        $employees=Employee::whereHas('roles',function($query){
+            $query->where('name','=','Employee');
+        })->get();
         $data='';
         foreach($employees as $employee){
             if($this->employee_id ==$employee->id){

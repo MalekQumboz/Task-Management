@@ -2,8 +2,8 @@
 
 @section('page-title','Employee')
 
-@section('big-title','Create')
-@section('sm-title','Create')
+@section('big-title','Edit')
+@section('sm-title','Edit')
 
 @section('content')
 <section class="content">
@@ -13,7 +13,7 @@
           <!-- general form elements -->
           <div class="card card-primary">
             <div class="card-header">
-              <h3 class="card-title">Create Employee</h3>
+              <h3 class="card-title">Edit Employee</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
@@ -57,15 +57,18 @@
                   </div>
                   <div class="col-md-6">
 
-                    <div class="form-group">
-                      <label for="department">Department</label>
-                      <select class="form-control" id="department">
-                          <option value="HR"  @selected($employees->department=='HR')>HR</option>
-                          <option value="PM" @selected($employees->department=='PM')>Project Manager</option>
-                          <option value="E" @selected($employees->department=='E')>Employee</option>
-                      </select>
-                    </div> 
 
+                    <div class="form-group">
+                      <label for="department_id">Department</label>
+                      <select class="form-control" id="department_id">
+                        @foreach ($departmentRole as $department )
+                        <option value="{{$department->id}}"
+                          @selected($CurrentRole->id==$department->id)>{{$department->name}}</option>
+                        @endforeach
+                      </select>
+                    </div>
+
+                   
                     <div class="form-group">
                       <label for="salary">Salary</label>
                       <input type="number" class="form-control" id="salary" value="{{$employees->salary}}" placeholder=" Enter Salary">
@@ -105,7 +108,7 @@
           birthday:document.getElementById('birthday').value,
           email:document.getElementById('email').value,
           phone:document.getElementById('phone').value,
-          department:document.getElementById('department').value,
+          department_id:document.getElementById('department_id').value,
           salary:document.getElementById('salary').value,
           hiring:document.getElementById('hiring').value,
           // password:document.getElementById('password').value,

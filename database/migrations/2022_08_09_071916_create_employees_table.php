@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->date('hiring');
             $table->integer('salary');
-            $table->enum('department', ['HR', 'PM','E'])->default('E');
             $table->string('password');
             $table->timestamps();
         });

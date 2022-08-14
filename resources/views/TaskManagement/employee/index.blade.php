@@ -75,7 +75,7 @@
                   <td>{{$employee->phone}} </td>
                   <td> 
                  
-                    {{$employee->departmentName}}
+                    {{$employee->roles[0]->name}}
                   </td>
                   
                   <td>{{$employee->salary}}</td>

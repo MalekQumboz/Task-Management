@@ -31,7 +31,11 @@ class ProjectController extends Controller
     public function create()
     {
         //
-        $projectManagers=Employee::where('department','=','PM')->get();
+        
+        $projectManagers=Employee::whereHas('roles',function($query){
+            $query->where('name','=','Project Manager');
+        })->get();
+
         return response()->view('TaskManagement.project.create',['projectManagers'=>$projectManagers]);
     }
 
@@ -92,7 +96,9 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         //
-        $projectManagers=Employee::where('department','=','PM')->get();
+        $projectManagers=Employee::whereHas('roles',function($query){
+            $query->where('name','=','Project Manager');
+        })->get();
         return response()->view('TaskManagement.project.edit',['projectManagers'=>$projectManagers,'projects'=>$project]);
     }
 

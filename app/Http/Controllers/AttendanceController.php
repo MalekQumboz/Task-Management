@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AttendanceController extends Controller
 {
@@ -15,13 +16,9 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        //
-        // $attendances=Attendance::with('employee')->get();
+        $attendances=Attendance::with('employee')->get();
         // $employees=Employee::all();
-        // return response()->view('TaskManagement.attendance.index',['attendances'=>$attendances,'employees'=>$employees]);
-
-        $employees=Employee::all();
-        return response()->view('TaskManagement.attendance.create',['employees'=>$employees]);
+        return response()->view('TaskManagement.attendance.index',['attendances'=>$attendances]);
 
     }
 
@@ -33,8 +30,9 @@ class AttendanceController extends Controller
     public function create()
     {
         //
+        $date=date('Y-m-d');
         $employees=Employee::all();
-        return response()->view('TaskManagement.attendance.create',['employees'=>$employees]);
+        return response()->view('TaskManagement.attendance.create',['employees'=>$employees,'date'=>$date]);
     }
 
     /**
@@ -46,6 +44,34 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
         //
+        $validator=validator($request->all(),[
+            'employee_id'=>'required|numeric|exists:employees,id',
+            'date'=>'required',
+            'presence'=>'required|boolean',
+            'late'=>'required|boolean',
+            'absence'=>'required|boolean',
+        ]);
+
+        if(!$validator->fails()){
+            $attendance=new Attendance();
+            $attendance->employee_id=$request->input('employee_id');
+            $attendance->date=$request->input('date');
+            $attendance->presence=$request->input('presence');
+            $attendance->late=$request->input('late');
+            $attendance->absence=$request->input('absence');
+
+            $isSaved=$attendance->save();
+
+         
+            return response()->json([
+                'message'=>$isSaved ? 'Saved successfully' : 'Save failed']
+                ,$isSaved ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
+
+        }else{
+            return response()->json([
+                'message'=>$validator->getMessageBag()->first()
+            ],Response::HTTP_BAD_REQUEST);
+        };
     }
 
     /**
@@ -80,6 +106,7 @@ class AttendanceController extends Controller
     public function update(Request $request, Attendance $attendance)
     {
         //
+     
     }
 
     /**

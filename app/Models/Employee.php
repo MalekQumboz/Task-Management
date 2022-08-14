@@ -6,25 +6,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
-class Employee extends Model
+class Employee extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory,HasRoles;
+    
+    public function userName():Attribute{
+        return new Attribute(get: fn()=> $this->name);
+    }
 
-    public function departmentName(): Attribute{
-        $department='';
-        if($this->department == 'HR'){
-            $department='Human Resource';
-        }elseif($this->department == 'PM'){
-            $department='Project Manager';
-        }elseif($this->department == 'E'){
-            $department='Employee';
-        }
+    // public function departmentName(): Attribute{
+    //     $department='';
+    //     if($this->department == 'HR'){
+    //         $department='Human Resource';
+    //     }elseif($this->department == 'PM'){
+    //         $department='Project Manager';
+    //     }elseif($this->department == 'E'){
+    //         $department='Employee';
+    //     }
         
 
-        return new Attribute(get: fn()=> $department );
-    }    
+    //     return new Attribute(get: fn()=> $department );
+    // }    
 
     public function projects()
     {

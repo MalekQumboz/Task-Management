@@ -58,11 +58,11 @@
                   <div class="col-md-6">
 
                     <div class="form-group">
-                      <label for="department">Department</label>
-                      <select class="form-control" id="department">
-                          <option value="HR">HR</option>
-                          <option value="PM">Project Manager</option>
-                          <option value="E">Employee</option>
+                      <label for="department_id">Department</label>
+                      <select class="form-control" id="department_id">
+                        @foreach ($departmentRole as $department )
+                        <option value="{{$department->id}}">{{$department->name}}</option>
+                        @endforeach
                       </select>
                     </div> 
 
@@ -111,7 +111,7 @@
           birthday:document.getElementById('birthday').value,
           email:document.getElementById('email').value,
           phone:document.getElementById('phone').value,
-          department:document.getElementById('department').value,
+          department_id:document.getElementById('department_id').value,
           salary:document.getElementById('salary').value,
           hiring:document.getElementById('hiring').value,
           // password:document.getElementById('password').value,

@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained();
             $table->date('date');
-            $table->time('time');
-            $table->boolean('status');
+            $table->boolean('presence')->default(false);
+            $table->boolean('absence')->default(false);
+            $table->boolean('late')->default(false);
+            
             $table->timestamps();
         });
     }

@@ -159,7 +159,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <a href="#" class="brand-link">
       <img src="{{asset('Task-Management/dist/img/hotel.jpg')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">Task Management</span>
     </a>
@@ -172,7 +172,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="{{asset('Task-Management/dist/img/user.jpg')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          {{-- <a href="#" class="d-block">{{auth()->user()->userName}}</a> --}}
+          <a href="#" class="d-block">{{auth()->user()->userName}}</a>
         </div>
       </div>
 
@@ -205,8 +205,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                
 
           
-
+          @canany(['Create-Employee', 'Read-Employees', 'Update-Employee','Delete-Employee',
+          'Create-Attendance', 'Read-Attendances', 'Update-Attendance','Delete-Attendance'])
           <li class="nav-header">Human Resources</li>
+
+          @canany(['Create-Employee', 'Read-Employees', 'Update-Employee','Delete-Employee'])
           <li class="nav-item">
             <a href="#" class="nav-link ">
               <i class="nav-icon fas fa-user-tie"></i>
@@ -216,31 +219,61 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
             <ul class="nav nav-treeview" style="display: none;">
+              @canany([ 'Read-Employees', 'Update-Employee','Delete-Employee'])
               <li class="nav-item">
                 <a href="{{route('employees.index')}}" class="nav-link ">
                   <i class=" fas fa-users nav-icon"></i>
                   <p>Index</p>
                 </a>
               </li>
+              @endcanany
+
+              @can('Create-Employee')
               <li class="nav-item">
                 <a href="{{route('employees.create')}}" class="nav-link ">
                   <i class="far fa-edit nav-icon"></i>
                   <p>Create</p>
                 </a>
               </li>
+              @endcan
+
             </ul>
           </li>
+          @endcanany
 
+          @canany(['Create-Attendance', 'Read-Attendances', 'Update-Attendance','Delete-Attendance'])
           <li class="nav-item">
             <a href="{{route('attendances.index')}}" class="nav-link ">
-              <i class="nav-icon fas fa-address-book"></i>
+              <i class="nav-icon far fa-calendar-alt"></i>
               <p>
                 Attendance
+                <i class="fas fa-angle-left right"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              
+              <li class="nav-item">
+                <a href="{{route('attendances.index')}}" class="nav-link ">
+                  <i class=" fas fa-address-book nav-icon"></i>
+                  <p>Index</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('attendances.create')}}" class="nav-link ">
+                  <i class="far fa-edit nav-icon"></i>
+                  <p>sign up</p>
+                </a>
+              </li>
+            </ul>
           </li>
+          @endcanany
+          @endcanany
 
+          @canany(['Create-Project', 'Read-Projects', 'Update-Project','Delete-Project',
+          'Create-Task', 'Read-Tasks', 'Update-Task','Delete-Task'])
           <li class="nav-header">Content Mangement</li>
+
+          @canany(['Create-Project', 'Read-Projects', 'Update-Project','Delete-Project'])
           <li class="nav-item">
             <a href="#" class="nav-link ">
               <i class="nav-icon fas fa-hotel"></i>
@@ -250,21 +283,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
             <ul class="nav nav-treeview" style="display: none;">
+
+              @canany([ 'Read-Projects', 'Update-Project','Delete-Project'])
               <li class="nav-item">
                 <a href="{{route('projects.index')}}" class="nav-link ">
                   <i class="fas fa-book nav-icon"></i>
                   <p>Index</p>
                 </a>
               </li>
+              @endcanany
+
+              @can('Create-Project')
               <li class="nav-item">
                 <a href="{{route('projects.create')}}" class="nav-link ">
                   <i class="fas fa-plus nav-icon"></i>
                   <p>Create</p>
                 </a>
               </li>
+              @endcan
             </ul>
           </li>
+          @endcanany
 
+          @canany(['Create-Task', 'Read-Tasks', 'Update-Task','Delete-Task'])
           <li class="nav-item">
             <a href="#" class="nav-link ">
               <i class="nav-icon fas fa-clipboard"></i>
@@ -274,23 +315,34 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
             <ul class="nav nav-treeview" style="display: none;">
+              
+              @canany([ 'Read-Tasks', 'Update-Task','Delete-Task'])
               <li class="nav-item">
                 <a href="{{route('tasks.index')}}" class="nav-link ">
                   <i class="fas fa-book nav-icon"></i>
                   <p>Index</p>
                 </a>
               </li>
+              @endcanany
+
+              @can('Create-Task')
               <li class="nav-item">
                 <a href="{{route('tasks.create')}}" class="nav-link ">
                   <i class="fas fa-plus nav-icon"></i>
                   <p>Create</p>
                 </a>
               </li>
+              @endcan
             </ul>
           </li>
+          @endcanany
 
+          @endcanany
+
+          @canany(['Read-Roles', 'Create-Role', 'Update-Role','Delete-Role','Read-Permission'])
           <li class="nav-header">Role & Permission</li>
 
+          @canany(['Read-Roles', 'Create-Role', 'Update-Role','Delete-Role'])
           <li class="nav-item">
             <a href="#" class="nav-link ">
               <i class="nav-icon fas fa-user-tag"></i>
@@ -300,21 +352,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
             <ul class="nav nav-treeview" style="display: none;">
+
+              @canany(['Read-Roles', 'Update-Role','Delete-Role'])
               <li class="nav-item">
-                <a href="#" class="nav-link ">
+                <a href="{{route('roles.index')}}" class="nav-link ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Index</p>
                 </a>
               </li>
+              @endcanany
+
+              @can('Create-Role')
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{route('roles.create')}}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Create </p>
                 </a>
               </li>
+              @endcan
               
             </ul>
           </li>
+          @endcanany
+
+          @can('Read-Permission')
           <li class="nav-item">
             <a href="#" class="nav-link ">
               <i class="nav-icon fas fa-id-badge"></i>
@@ -325,17 +386,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="nav nav-treeview" style="display: none;">
               <li class="nav-item">
-                <a href="#" class="nav-link ">
+                <a href="{{route('permissions.index')}}" class="nav-link ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Index</p>
                 </a>
               </li>
             </ul>
           </li>
+          @endcan
+
+          @endcanany
 
           <li class="nav-header">Setting</li>
           <li class="nav-item">
-            <a href="#" class="nav-link ">
+            <a href="{{route('Task-Management.edit-password')}}" class="nav-link ">
               <i class="fas fa-lock"></i>
               <p>
                 Change Password
@@ -343,7 +407,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link ">
+            <a href="{{route('logout')}}" class="nav-link ">
               <i class="fas fa-sign-out-alt"></i>
               <p>
                 Logout

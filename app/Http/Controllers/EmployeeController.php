@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordEmail;
 use App\Models\employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use Nette\Utils\Random;
+use Spatie\Permission\Models\Role;
 use Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,8 +23,9 @@ class EmployeeController extends Controller
     public function index()
     {
         //
-        $employee=employee::all();
-        return response()->view('TaskManagement.employee.index',['employees'=>$employee]);
+        $employee=employee::with('roles')->get();
+        return response()->view('TaskManagement.employee.index',
+        ['employees'=>$employee]);
 
     }
 
@@ -33,7 +37,9 @@ class EmployeeController extends Controller
     public function create()
     {
         //
-        return response()->view('TaskManagement.employee.create');
+        $departmentRole=Role::where('guard_name','=','employee')->get();
+        return response()->view('TaskManagement.employee.create',
+        ['departmentRole'=>$departmentRole]);
 
     }
 
@@ -52,7 +58,7 @@ class EmployeeController extends Controller
             'birthday'=>'required|date',
             'email'=>'required|email|unique:employees,email',
             'phone'=>'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
-            'department'=>'required|String',
+            'department_id'=>'required|numeric|exists:roles,id',
             'salary'=>'required|numeric',
             'hiring'=>'required|date',
             // 'password'=>['required','String',Password::min(6)->letters()->numbers()->uncompromised()],
@@ -65,7 +71,6 @@ class EmployeeController extends Controller
             $employee->birthday=$request->input('birthday');
             $employee->email=$request->input('email');
             $employee->phone=$request->input('phone');
-            $employee->department=$request->input('department');
             $employee->salary=$request->input('salary');
             $employee->hiring=$request->input('hiring');
             $password=Str::random(8);
@@ -73,7 +78,11 @@ class EmployeeController extends Controller
 
             $isSaved=$employee->save();
 
-         
+            if($isSaved){
+                Mail::to($employee->email)->send(new PasswordEmail($employee,$password));
+                $employee->syncRoles(Role::findById($request->input('department_id'),'employee'));
+
+            }
             return response()->json([
                 'message'=>$isSaved ? 'Saved successfully' : 'Save failed']
                 ,$isSaved ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
@@ -106,7 +115,10 @@ class EmployeeController extends Controller
     public function edit(employee $employee)
     {
         //
-        return response()->view('TaskManagement.employee.edit',['employees'=>$employee]);
+        $departmentRole=Role::where('guard_name','=','employee')->get();
+        $CurrentRole=$employee->roles[0];
+        return response()->view('TaskManagement.employee.edit',
+        ['employees'=>$employee,'departmentRole'=>$departmentRole ,'CurrentRole'=>$CurrentRole]);
     }
 
     /**
@@ -125,7 +137,7 @@ class EmployeeController extends Controller
             'birthday'=>'required|date',
             'email'=>'required|email|unique:employees,email,'.$employee->id,
             'phone'=>'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
-            'department'=>'required|String',
+            'department_id'=>'required|numeric|exists:roles,id',
             'salary'=>'required|numeric',
             'hiring'=>'required|date',
             // 'password'=>['required','String',Password::min(6)->letters()->numbers()->uncompromised()],
@@ -137,14 +149,18 @@ class EmployeeController extends Controller
             $employee->birthday=$request->input('birthday');
             $employee->email=$request->input('email');
             $employee->phone=$request->input('phone');
-            $employee->department=$request->input('department');
             $employee->salary=$request->input('salary');
             $employee->hiring=$request->input('hiring');
-            $password=Str::random(8);
-            $employee->password=Hash::make($password);            
+            // $password=Str::random(8);
+            // $employee->password=Hash::make($password);            
 
             $isSaved=$employee->save();
 
+            if($isSaved){
+                // Mail::to($employee->email)->send(new PasswordEmail($employee,$password));
+                $employee->syncRoles(Role::findById($request->input('department_id'),'employee'));
+
+            }
          
             return response()->json([
                 'message'=>$isSaved ? 'Saved successfully' : 'Save failed']

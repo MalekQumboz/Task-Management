@@ -30,7 +30,9 @@ class taskController extends Controller
     public function create()
     {
         //
-        $employees=Employee::where('department','=','E')->get();
+        $employees=Employee::whereHas('roles',function($query){
+            $query->where('name','=','Employee');
+        })->get();
         $projects=Project::all();
         return response()->view('taskManagement.task.create',
         ['employees'=>$employees,'projects'=>$projects]);
@@ -95,7 +97,9 @@ class taskController extends Controller
     public function edit(task $task)
     {
         //
-        $employees=Employee::where('department','=','E')->get();
+        $employees=Employee::whereHas('roles',function($query){
+            $query->where('name','=','Employee');
+        })->get();
         $projects=Project::all();
         return response()->view('taskManagement.task.edit',
         ['employees'=>$employees,'projects'=>$projects,'tasks'=>$task]);

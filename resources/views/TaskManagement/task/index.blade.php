@@ -59,22 +59,21 @@
                       </td>
                       
                       <td>
-                        <div class="margin">
+                        {{-- <div class="margin">
                           <div class="btn-group">
                             <button type="button" class="btn btn-default">Status</button>
                             <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
                               <span class="sr-only">Toggle Dropdown</span>
                             </button>
-                            <div class="dropdown-menu" role="menu" style="">
-                              <a class="dropdown-item" href="#" >Action</a>
-                              <a class="dropdown-item" href="#">Another action</a>
-                              <a class="dropdown-item" href="#">Something else here</a>
-                              <div class="dropdown-divider"></div>
-                              <a class="dropdown-item" href="#">Separated link</a>
-                            </div>
+                            <button class="dropdown-menu" role="menu" style="">
+                              <button class="dropdown-item"  value="toDo" onclick="statusUpdate()" >To Do</button>
+                              <button class="dropdown-item"   value="inprogress" onclick="statusUpdate()">Inprogress</button>
+                              <button class="dropdown-item"  value="completed" onclick="statusUpdate()">Completed</button>
+                              
+                            </button>
                           </div>
                          
-                        </div>
+                        </div> --}}
                       </td>
           
                     <td> <div class="btn-group">
@@ -104,6 +103,36 @@
 @endsection
 
 @section('script')
+
+    {{-- <script>
+      function statusUpdate(){
+        axios.put('/Task-Management/tasks/{{$tasks->id}}',{
+          // name:document.getElementById('name').value,
+          // description:document.getElementById('description').value,
+          status:document.getElementById('status').value,
+          
+          // project_id:document.getElementById('project_id').value,
+          // employee_id:document.getElementById('employee_id').value,
+        })
+        .then(function (response) {
+
+          // handle success
+          console.log(response);
+          toastr.success(response.data.message);
+          window.location.href='/Task-Management/tasks'
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+          toastr.error(error.response.data.message)
+        })
+        .then(function () {
+          // always executed
+        });
+
+      }
+    </script> --}}
+
    <script>
     function confirmDelete(id){
       Swal.fire({
