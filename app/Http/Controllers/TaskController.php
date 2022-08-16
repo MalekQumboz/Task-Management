@@ -18,8 +18,13 @@ class taskController extends Controller
     public function index()
     {
         //
-        $tasks=task::all();
-        return response()->view('TaskManagement.task.index',['tasks'=>$tasks]);
+        $employees=Employee::whereHas('roles',function($query){
+            $query->where('name','=','Employee');
+        })->get();
+        $projects=Project::all();
+        $tasks=task::paginate(10);
+        return response()->view('TaskManagement.task.index',
+        ['tasks'=>$tasks,'employees'=>$employees,'projects'=>$projects]);
     }
 
     /**
@@ -154,5 +159,27 @@ class taskController extends Controller
     public function destroy(task $task)
     {
         //
+    }
+
+    
+    public function updateStatus(Request $request, task $task)
+    {
+        $validator=validator($request->all(),[
+            'status'=>'required|string|exists:tasks,status',
+            ]);
+
+            if(!$validator->fails()){
+                $task->status=$request->input('status');
+                $isSaved=$task->save();
+
+                return response()->json([
+                    'message'=>'Updated successfully ']
+                    , Response::HTTP_OK );
+    
+            }else{
+                return response()->json([
+                    'message'=>$validator->getMessageBag()->first()
+                ],Response::HTTP_BAD_REQUEST);
+            };
     }
 }

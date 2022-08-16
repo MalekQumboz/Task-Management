@@ -18,9 +18,18 @@ class ProjectController extends Controller
     public function index()
     {
         //
-        $projects=Project::withCount('tasks')->get();
+        $projects=Project::withCount('tasks')->paginate(10);
 
-        return response()->view('TaskManagement.project.index',['projects'=>$projects]);
+        $tasksCompleted=Project::withCount(['tasks'=>function($query){
+            $query->where('status','=','completed');
+        }])->get();
+
+        $projectManagers=Employee::whereHas('roles',function($query){
+            $query->where('name','=','Project Manager');
+        })->get();
+
+        return response()->view('TaskManagement.project.index',
+        ['projects'=>$projects,'projectManagers'=>$projectManagers,'tasksCompleted'=>$tasksCompleted]);
     }
 
     /**
@@ -160,18 +169,8 @@ class ProjectController extends Controller
 
 public function showTasks( Project $project)
     {
-        $tasks=Task::where('project_id','=',$project->id)->get();
-        // $projectTasks=$project->tasks;
-        // if(count($projectTasks)>0){
-        //     foreach($tasks as  $task){
-        //         $task->setAttribute('assigned',false);
-        //         foreach($projectTasks as $projectTask){
-        //             if($task->id == $projectTask->id){
-        //                 $task->setAttribute('assigned',true);
-        //             }
-        //         }
-        //     }
-        // }
+        $tasks=Task::where('project_id','=',$project->id)->paginate(10);
+     
         return response()->view('TaskManagement.project.projectTasks',['tasks'=>$tasks,'projects'=>$project]);
     }
 

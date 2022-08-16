@@ -43,23 +43,28 @@
                 </td>
                 
               <td> 
-                
+                <div class="margin">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default">Status</button>
+                    <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                      <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu" role="menu" style="">
+                      <button value="toDo"  onclick="statusUpdate('toDo','{{$task->id}}')" class="dropdown-item" >To Do</button>
+                      <button value="inprogress" onclick="statusUpdate('inprogress','{{$task->id}}')" class="dropdown-item" >Inprogress</button>
+                      <button value="completed"  onclick="statusUpdate('completed','{{$task->id}}')" class="dropdown-item" >Completed</button>
+                    </div>
+                  </div>
+                </div>
               </td>
               </tr>
               @endforeach
           </tbody>
         </table>
+        {{$tasks->links()}}
       </div>
       <!-- /.card-body -->
-      <div class="card-footer clearfix">
-        <ul class="pagination pagination-sm m-0 float-right">
-          <li class="page-item"><a class="page-link" href="#">«</a></li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">»</a></li>
-        </ul>
-      </div>
+     
     </div>
     <!-- /.card -->
 
@@ -74,27 +79,29 @@
 
 @section('script')
 <script>
-  function preformUpdate(id){
-      axios.put('/Task-Management/projects/{{$projects->id}}/tasks',{
-        permission_id:id,
-        
-      })
-      .then(function (response) {
-  
-        // handle success
-        console.log(response);
-        toastr.success(response.data.message);
-        window.location.href='/Task-Management/projects/{{$projects->id}}/tasks'
-        
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-        toastr.error(error.response.data.message)
-      })
-      .then(function () {
-        // always executed
-      });
+  function statusUpdate(statusValue,id){
+    axios.put('/Task-Management/status/'+id,{
+      status:statusValue,
+      
+      // status:document.getElementById('3').value,
+    })
+    .then(function (response) {
+
+      // handle success
+      console.log(response);
+      toastr.success(response.data.message);
+      window.location.href='/Task-Management/projects/{{$projects->id}}/tasks'
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+      toastr.error(error.response.data.message)
+    })
+    .then(function () {
+      // always executed
+    });
+
   }
-  </script>
+</script>
+
 @endsection

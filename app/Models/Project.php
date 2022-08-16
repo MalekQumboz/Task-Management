@@ -10,6 +10,21 @@ class Project extends Model
 {
     use HasFactory;
 
+    // public function progressKey(): Attribute{
+    //     $projects=Project::withCount('tasks')->get();
+    //     $taskCompleted=Project::withCount(['tasks'=>function($query){
+    //         $query->where('status','=','completed');
+    //     }])->get();
+    //     $progress=0.0;
+    //     if($projects->tasks_count >0){
+    //         $progress=($taskCompleted->tasks_count/$projects->tasks_count)*100;
+    //     }
+        
+    //     return new Attribute(get: fn()=> $progress );
+    // }
+
+    
+
     public function statusKey(): Attribute{
         $data='';
         if($this->status =='completed'){

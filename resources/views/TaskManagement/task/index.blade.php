@@ -12,21 +12,85 @@
       <div class="row">
         <div class="col-md-12">
           <div class="card">
-            <div class="card-header">
-                
-  
-                <div class="card-tools">
-                  <div class="input-group input-group-sm" style="width: 150px;">
-                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-  
-                    <div class="input-group-append">
-                      <button type="submit" class="btn btn-default">
-                        <i class="fas fa-search"></i>
-                      </button>
+              <div class="card-header">
+
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-lg">
+                  New Task
+                </button>
+    
+                <div class="modal fade" id="modal-lg">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Create Task</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="resetForm">
+                          @csrf
+                            <div class="card-body" style="display: block;">
+                              <div class="form-group">
+                                <label for="name">Task Name</label>
+                                <input type="text" id="name" class="form-control">
+                              </div>
+                              <div class="form-group">
+                                <label for="description">Task Description</label>
+                                <textarea id="description" class="form-control" rows="4"></textarea>
+                              </div>
+                              <div class="form-group">
+                                <label for="status">Status</label>
+                                <select id="status" class="form-control custom-select">
+                                  <option selected="" disabled="">Select one</option>
+                                  <option value="toDo">To Do</option>
+                                  <option value="inprogress">Inprogress</option>
+                                  <option value="completed">Completed</option>
+                                </select>
+                              </div>
+                              
+                              <div class="form-group">
+                                <label for="project_id">Project Name</label>
+                                <select id="project_id" class="form-control custom-select">
+                                  <option selected="" disabled="">Select one</option>
+                                  @foreach ($projects as $project)
+                                      <option value="{{$project->id}}">{{$project->name}}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                              <div class="form-group">
+                                <label for="employee_id">Employee Name</label>
+                                <select id="employee_id" class="form-control custom-select">
+                                  <option selected="" disabled="">Select one</option>
+                                  @foreach ($employees as $employee)
+                                      <option value="{{$employee->id}}">{{$employee->name}}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+                          </form>
+                      </div>
+                      <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" onclick="preformSave()" class="btn btn-primary">Save</button>
+                      </div>
                     </div>
+                    <!-- /.modal-content -->
                   </div>
                 </div>
+                  <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                      <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+    
+                      <div class="input-group-append">
+                        <button type="submit" class="btn btn-default">
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
               </div>
+    
             <!-- /.card-header -->
             <div class="card-body p-0">
               <table class="table">
@@ -59,21 +123,19 @@
                       </td>
                       
                       <td>
-                        {{-- <div class="margin">
+                        <div class="margin">
                           <div class="btn-group">
                             <button type="button" class="btn btn-default">Status</button>
                             <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
                               <span class="sr-only">Toggle Dropdown</span>
                             </button>
-                            <button class="dropdown-menu" role="menu" style="">
-                              <button class="dropdown-item"  value="toDo" onclick="statusUpdate()" >To Do</button>
-                              <button class="dropdown-item"   value="inprogress" onclick="statusUpdate()">Inprogress</button>
-                              <button class="dropdown-item"  value="completed" onclick="statusUpdate()">Completed</button>
-                              
-                            </button>
+                            <div class="dropdown-menu" role="menu" style="">
+                              <button value="toDo"  onclick="statusUpdate('toDo','{{$task->id}}')" class="dropdown-item" >To Do</button>
+                              <button value="inprogress" onclick="statusUpdate('inprogress','{{$task->id}}')" class="dropdown-item" >Inprogress</button>
+                              <button value="completed"  onclick="statusUpdate('completed','{{$task->id}}')" class="dropdown-item" >Completed</button>
+                            </div>
                           </div>
-                         
-                        </div> --}}
+                        </div>
                       </td>
           
                     <td> <div class="btn-group">
@@ -90,6 +152,7 @@
                     @endforeach
                 </tbody>
               </table>
+              {{$tasks->links()}}
             </div>
           </div>
         </div>
@@ -104,15 +167,12 @@
 
 @section('script')
 
-    {{-- <script>
-      function statusUpdate(){
-        axios.put('/Task-Management/tasks/{{$tasks->id}}',{
-          // name:document.getElementById('name').value,
-          // description:document.getElementById('description').value,
-          status:document.getElementById('status').value,
+    <script>
+      function statusUpdate(statusValue,id){
+        axios.put('/Task-Management/status/'+id,{
+          status:statusValue,
           
-          // project_id:document.getElementById('project_id').value,
-          // employee_id:document.getElementById('employee_id').value,
+          // status:document.getElementById('3').value,
         })
         .then(function (response) {
 
@@ -131,8 +191,37 @@
         });
 
       }
-    </script> --}}
+    </script>
 
+    <script>
+      function preformSave(){
+        axios.post('/Task-Management/tasks',{
+          name:document.getElementById('name').value,
+          description:document.getElementById('description').value,
+          status:document.getElementById('status').value,
+          project_id:document.getElementById('project_id').value,
+          employee_id:document.getElementById('employee_id').value,
+        })
+        .then(function (response) {
+  
+          // handle success
+          console.log(response);
+          toastr.success(response.data.message);
+          // document.getElementById('resetForm').reset();
+          window.location.href="/Task-Management/tasks"
+
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+          toastr.error(error.response.data.message)
+        })
+        .then(function () {
+          // always executed
+        });
+  
+      }
+    </script>
    <script>
     function confirmDelete(id){
       Swal.fire({

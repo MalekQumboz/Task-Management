@@ -16,8 +16,7 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendances=Attendance::with('employee')->get();
-        // $employees=Employee::all();
+        $attendances=Attendance::with('employee')->paginate(10);
         return response()->view('TaskManagement.attendance.index',['attendances'=>$attendances]);
 
     }

@@ -13,32 +13,62 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-              
 
-              <!-- Button trigger modal -->
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Launch demo modal
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-lg">
+                New Project
               </button>
-
-              <!-- Modal -->
-              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+  
+              <div class="modal fade" id="modal-lg">
+                <div class="modal-dialog modal-lg">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      <h4 class="modal-title">Create Project</h4>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
                     </div>
                     <div class="modal-body">
-                      ...
+                      <form id="resetForm">
+                        @csrf
+                          <div class="card-body" style="display: block;">
+                            <div class="form-group">
+                              <label for="name">Project Name</label>
+                              <input type="text" id="name" class="form-control">
+                            </div>
+                            <div class="form-group">
+                              <label for="description">Project Description</label>
+                              <textarea id="description" class="form-control" rows="4"></textarea>
+                            </div>
+                            <div class="form-group">
+                              <label for="status">Status</label>
+                              <select id="status" class="form-control custom-select">
+                                <option selected="" disabled="">Select one</option>
+                                <option value="completed">Completed</option>
+                                <option value="inprogress">Inprogress</option>
+                                <option value="canceled">Canceled</option>
+                              </select>
+                            </div>
+                            
+                            <div class="form-group">
+                              <label for="projectManager">Project Leader</label>
+                              <select id="projectManager" class="form-control custom-select">
+                                <option selected="" disabled="">Select one</option>
+                                @foreach ($projectManagers as $projectManager)
+                                    <option value="{{$projectManager->name}}">{{$projectManager->name}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save changes</button>
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" onclick="preformSave()" class="btn btn-primary">Save</button>
                     </div>
                   </div>
+                  <!-- /.modal-content -->
                 </div>
               </div>
-  
                 <div class="card-tools">
                   <div class="input-group input-group-sm" style="width: 150px;">
                     <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
@@ -50,7 +80,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+            </div>
             <!-- /.card-header -->
             <div class="card-body p-0">
               <table class="table">
@@ -88,7 +118,19 @@
               
                       </td>
                       
-                      <td>{{$project->salary}}</td>
+                      <td>
+                        <div class="progress progress-xs">
+                          <div class="progress-bar progress-bar-danger" 
+                          style="width:@if($project->tasks_count>0) 
+                          @foreach ($tasksCompleted as $taskCompleted )
+                            @if($project->id == $taskCompleted->id)
+                            {{($taskCompleted->tasks_count/$project->tasks_count)*100}}%
+                            @endif
+                          @endforeach
+                          
+                          @endif"></div>
+                        </div>
+                      </td>
           
                     <td> <div class="btn-group">
                       <a href="{{route('projects.edit',$project->id)}}" class="btn btn-warning">
@@ -104,6 +146,7 @@
                     @endforeach
                 </tbody>
               </table>
+              {{$projects->links()}}
             </div>
           </div>
         </div>
@@ -117,9 +160,35 @@
 @endsection
 
 @section('script')
-<!-- Bootstrap 4 -->
-<script src="Task-Management/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+<script>
+  function preformSave(){
+    axios.post('/Task-Management/projects',{
+      name:document.getElementById('name').value,
+      description:document.getElementById('description').value,
+      status:document.getElementById('status').value,
+      projectManager:document.getElementById('projectManager').value,
+    })
+    .then(function (response) {
+
+      // handle success
+      console.log(response);
+      toastr.success(response.data.message);
+      // document.getElementById('resetForm').reset();
+      window.location.href="/Task-Management/projects"
+
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+      toastr.error(error.response.data.message)
+    })
+    .then(function () {
+      // always executed
+    });
+
+  }
+</script>
 <script>
     function confirmDelete(id){
       Swal.fire({

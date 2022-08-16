@@ -34,7 +34,9 @@ Route::prefix('/Task-Management')
     Route::resource('tasks',TaskController::class);
 
     Route::get('projects/{project}/tasks',[ProjectController::class,'showTasks'])->name('projectTasks.show');
-    Route::put('projects/{project}/tasks',[ProjectController::class,'updateTasks']);
+    // Route::put('projects/{project}/tasks',[ProjectController::class,'updateTasks']);
+
+    Route::put('status/{task}',[TaskController::class,'updateStatus']);
 
     Route::get('edit-password',[AuthController::class,'editPassword'])->name('Task-Management.edit-password');
     Route::put('edit-password',[AuthController::class,'updatePassword']);

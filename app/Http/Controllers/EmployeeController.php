@@ -23,9 +23,10 @@ class EmployeeController extends Controller
     public function index()
     {
         //
-        $employee=employee::with('roles')->get();
+        $departmentRole=Role::where('guard_name','=','employee')->get();
+        $employee=employee::with('roles')->paginate(5);
         return response()->view('TaskManagement.employee.index',
-        ['employees'=>$employee]);
+        ['employees'=>$employee,'departmentRole'=>$departmentRole]);
 
     }
 
