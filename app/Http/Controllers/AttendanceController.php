@@ -14,6 +14,12 @@ class AttendanceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->authorizeResource(Attendance::class,'attendance');
+    }
+
     public function index()
     {
         $attendances=Attendance::with('employee')->paginate(10);
@@ -31,7 +37,9 @@ class AttendanceController extends Controller
         //
         $date=date('Y-m-d');
         $employees=Employee::all();
-        return response()->view('TaskManagement.attendance.create',['employees'=>$employees,'date'=>$date]);
+        $attendances=Attendance::where('date','=',$date)->get();
+        return response()->view('TaskManagement.attendance.create',
+        ['employees'=>$employees,'date'=>$date,'attendances'=>$attendances]);
     }
 
     /**
@@ -45,19 +53,18 @@ class AttendanceController extends Controller
         //
         $validator=validator($request->all(),[
             'employee_id'=>'required|numeric|exists:employees,id',
-            'date'=>'required',
-            'presence'=>'required|boolean',
-            'late'=>'required|boolean',
-            'absence'=>'required|boolean',
+            // 'date'=>'required',
+            'status'=>'required|string',
+            
         ]);
 
         if(!$validator->fails()){
             $attendance=new Attendance();
             $attendance->employee_id=$request->input('employee_id');
-            $attendance->date=$request->input('date');
-            $attendance->presence=$request->input('presence');
-            $attendance->late=$request->input('late');
-            $attendance->absence=$request->input('absence');
+            $date=date('Y-m-d');
+            $attendance->date=$date;
+            $attendance->status=$request->input('status');
+            
 
             $isSaved=$attendance->save();
 
@@ -105,6 +112,23 @@ class AttendanceController extends Controller
     public function update(Request $request, Attendance $attendance)
     {
         //
+        $validator=validator($request->all(),[
+            'status'=>'required|string|exists:attendances,status',
+            ]);
+
+            if(!$validator->fails()){
+                $attendance->status=$request->input('status');
+                $isSaved=$attendance->save();
+
+                return response()->json([
+                    'message'=>'Updated successfully ']
+                    , Response::HTTP_OK );
+    
+            }else{
+                return response()->json([
+                    'message'=>$validator->getMessageBag()->first()
+                ],Response::HTTP_BAD_REQUEST);
+            };
      
     }
 
@@ -117,5 +141,12 @@ class AttendanceController extends Controller
     public function destroy(Attendance $attendance)
     {
         //
+        $isDeleted= $attendance->delete(); 
+
+       return response()->json([
+        'title'=>$isDeleted ?'Deleted successfuliy' :'Deleted failed',
+        'message'=>$isDeleted ?'Attendance Deleted successfuliy' :'Attendance Deleted failed',
+        'icon'=>$isDeleted ?'success' :'error'
+       ],$isDeleted ? Response::HTTP_OK :Response::HTTP_BAD_REQUEST);
     }
 }

@@ -24,18 +24,20 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::prefix('/Task-Management')
-->middleware('auth:employee')
-->group(function(){
+Route::prefix('/Task-Management')->middleware('auth:employee')->group(function(){
+
     Route::view('/Dashboard','TaskManagement.dashboard')->name('Task-Management.dashboard');
     Route::resource('employees',EmployeeController::class);
     Route::resource('attendances',AttendanceController::class);
     Route::resource('projects',ProjectController::class);
     Route::resource('tasks',TaskController::class);
 
-    Route::get('projects/{project}/tasks',[ProjectController::class,'showTasks'])->name('projectTasks.show');
-    // Route::put('projects/{project}/tasks',[ProjectController::class,'updateTasks']);
+    Route::post('employees/search',[EmployeeController::class,'search']);
+    // Route::post('attendances/search',[AttendanceController::class,'search']);
+    // Route::post('projects/search',[ProjectController::class,'search']);
+    // Route::post('tasks/search',[TaskController::class,'search']);
 
+    Route::get('projects/{project}/tasks',[ProjectController::class,'showTasks'])->name('projectTasks.show');
     Route::put('status/{task}',[TaskController::class,'updateStatus']);
 
     Route::get('edit-password',[AuthController::class,'editPassword'])->name('Task-Management.edit-password');

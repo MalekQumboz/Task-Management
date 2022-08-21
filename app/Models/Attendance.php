@@ -10,6 +10,9 @@ class Attendance extends Model
 {
     use HasFactory;
 
+    
+    
+
     public function statusKey(): Attribute{
         $status='';
         if($this->status == 'late'){

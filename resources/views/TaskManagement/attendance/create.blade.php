@@ -35,9 +35,10 @@
                 <thead>
                   <tr>
                     <th style="width: 10%">#</th>
-                    <th style="width:  20%">Name</th>
-                    <th style="width:  15%">ID</th>
-                    <th style="width:  40%">Status</th>
+                    <th style="width:  30%">Name</th>
+                    <th style="width:  10%">ID</th>
+                    <th style="width:  35%">Status</th>
+                    <th style="width:  15%">Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -51,29 +52,74 @@
            
                         <!-- radio -->
                         <div class="form-group clearfix">
+                          
+                          
+                          @if ($employee->id == $employee->EmployeeAttendanceID)
                           <div class="icheck-success d-inline">
-                            <input type="radio" name="status_{{$employee->id}}" id="statusPresence_{{$employee->id}}" 
-                            value="#" onclick="preformSave({{$employee->id}})" >
+                            <input type="radio" disabled name="status_{{$employee->id}}" id="statusPresence_{{$employee->id}}" 
+                             onclick="preformSave('{{$employee->id}}','presence')" @checked($employee->StatusKey=='presence')>
                             <label for="statusPresence_{{$employee->id}}">
                               Presence
                             </label>
                           </div>
+
                           <div class="icheck-warning d-inline">
-                            <input type="radio" name="status_{{$employee->id}}" id="statusLate_{{$employee->id}}" 
-                            value="{{true}}" onclick="preformSave({{$employee->id}})">
+                            <input type="radio" disabled name="status_{{$employee->id}}" id="statusLate_{{$employee->id}}" 
+                            onclick="preformSave('{{$employee->id}}','late')" @checked($employee->StatusKey=='late')>
                             <label for="statusLate_{{$employee->id}}">
                               Late
                             </label>
                           </div>
+
                           <div class="icheck-danger d-inline">
-                            <input type="radio" name="status_{{$employee->id}}" id="statusAbsence_{{$employee->id}}" 
-                            value="true" onclick="preformSave({{$employee->id}})" >
+                            <input type="radio" disabled name="status_{{$employee->id}}" id="statusAbsence_{{$employee->id}}" 
+                            onclick="preformSave('{{$employee->id}}','absence')"  @checked($employee->StatusKey=='absence') >
                             <label for="statusAbsence_{{$employee->id}}">
                               Absence
                             </label>
                           </div>
+                          @else
+
+                          <div class="icheck-success d-inline">
+                            <input type="radio" name="status_{{$employee->id}}" id="statusPresence_{{$employee->id}}" 
+                             onclick="preformSave('{{$employee->id}}','presence')" >
+                            <label for="statusPresence_{{$employee->id}}">
+                              Presence
+                            </label>
+                          </div>
+
+                          <div class="icheck-warning d-inline">
+                            <input type="radio" name="status_{{$employee->id}}" id="statusLate_{{$employee->id}}" 
+                            onclick="preformSave('{{$employee->id}}','late')">
+                            <label for="statusLate_{{$employee->id}}">
+                              Late
+                            </label>
+                          </div>
+
+                          <div class="icheck-danger d-inline">
+                            <input type="radio" name="status_{{$employee->id}}" id="statusAbsence_{{$employee->id}}" 
+                            onclick="preformSave('{{$employee->id}}','absence')" >
+                            <label for="statusAbsence_{{$employee->id}}">
+                              Absence
+                            </label>
+                          </div>
+                          @endif
                         </div>
-                      
+                    </td>
+                    <td>
+                      <div class="margin">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-default">Status</button>
+                          <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                          </button>
+                          <div class="dropdown-menu" role="menu" style="">
+                            <button   onclick="statusUpdate('presence','{{$employee->attendanceID}}')" class="dropdown-item" >Presence</button>
+                            <button  onclick="statusUpdate('late','{{$employee->attendanceID}}')" class="dropdown-item" >Late</button>
+                            <button   onclick="statusUpdate('absence','{{$employee->attendanceID}}')" class="dropdown-item" >Absence</button>
+                          </div>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                   @endforeach
@@ -95,14 +141,36 @@
 
 @section('script')
 <script>
-  function preformSave(id){
+  function statusUpdate(statusValue,id){
+    axios.put('/Task-Management/attendances/'+id,{
+      status:statusValue,
+      
+    })
+    .then(function (response) {
+
+      // handle success
+      console.log(response);
+      toastr.success(response.data.message);
+      window.location.href='/Task-Management/attendances/create'
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+      toastr.error(error.response.data.message)
+    })
+    .then(function () {
+      // always executed
+    });
+
+  }
+</script>
+
+<script>
+  function preformSave(id,attendanceStatuse){
       axios.post('/Task-Management/attendances',{
         employee_id:id,
-        date:{{$date}},
-        presence:document.getElementById('statusPresence_{{$employee->id}}').value,
-        late:document.getElementById('statusLate_{{$employee->id}}').value,
-        absence:document.getElementById('statusAbsence_{{$employee->id}}').value,
-        
+        // date:{{$date}},
+        status:attendanceStatuse,
         
       })
       .then(function (response) {

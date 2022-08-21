@@ -114,7 +114,7 @@
                       <td>{{$task->projectNameKey}}</td>
                       <td> 
                         <span class="badge
-                         @if ($task->status=='toDo')bg-danger 
+                         @if ($task->status=='toDo')bg-warning 
                          @elseif($task->status=='inprogress') bg-success 
                          @elseif($task->status=='completed') bg-primary
                          @endif ">

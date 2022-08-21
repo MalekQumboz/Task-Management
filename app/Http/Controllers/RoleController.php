@@ -14,6 +14,13 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->authorizeResource(Role::class,'role');
+    }
+
+
     public function index()
     {
         //

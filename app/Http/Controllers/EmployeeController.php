@@ -20,15 +20,41 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->authorizeResource(Employee::class,'employee');
+    }
+
     public function index()
     {
         //
         $departmentRole=Role::where('guard_name','=','employee')->get();
-        $employee=employee::with('roles')->paginate(5);
+        $employee=employee::with('roles')->paginate(10);
         return response()->view('TaskManagement.employee.index',
         ['employees'=>$employee,'departmentRole'=>$departmentRole]);
 
     }
+
+    public function search(Request $request)
+    {
+        dd($request->search);
+        // echo "ddd";
+        $validator=validator($request->all(),[
+            'search'=>'required',
+        ]);
+
+        
+            $search=$request->input('search');
+            $departmentRole=Role::where('guard_name','=','employee')->get();
+            $filtered= Employee::where('name','like','%'.$search.'%')
+                                ->orWhere('email','like','%'.$search.'%')->paginate(10);
+           return response()->view('TaskManagement.employee.index',
+           ['employees'=>$filtered,'departmentRole'=>$departmentRole]);
+        
+
+    }
+
 
     /**
      * Show the form for creating a new resource.

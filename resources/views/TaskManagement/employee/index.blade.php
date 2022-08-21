@@ -100,17 +100,20 @@
                 <!-- /.modal-content -->
               </div>
             </div>
-              <div class="card-tools">
-                <div class="input-group input-group-sm" style="width: 150px;">
-                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-default">
-                      <i class="fas fa-search"></i>
-                    </button>
-                  </div>
+            <div class="card-tools">
+              <form >
+                @csrf
+                <div class="input-group  mt-1">
+                  <input type="text"  id="search" class="form-control" placeholder="Search">
+                  
+                  <button type="button" onclick="preformSearch()" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                  </button>
                 </div>
-              </div>
+              </form>
+            </div>
+              
           </div>
           <!-- /.card-header -->
           <div class="card-body p-0">
@@ -171,6 +174,32 @@
 @endsection
 
 @section('script')
+
+ <script>
+  function preformSearch(){
+    axios.post('/Task-Management/employees/search',{
+      search:document.getElementById('search').value,
+      
+    })
+    .then(function (response) {
+
+      // handle success
+      console.log(response);
+      toastr.success(response.data.message);
+
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+      // toastr.error(error.response.data.message)
+    })
+    .then(function () {
+      // always executed
+    });
+
+  }
+</script>
+
 <script>
   function preformSave(){
     axios.post('/Task-Management/employees',{

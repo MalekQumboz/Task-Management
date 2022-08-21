@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attendances', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained();
-            $table->date('date');
-            
-            
-            $table->timestamps();
+        Schema::table('attendances', function (Blueprint $table) {
+            //
+            $table->enum('status', ['presence', 'absence','late']);
+
         });
     }
 
@@ -30,6 +27,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attendances');
+        Schema::table('attendances', function (Blueprint $table) {
+            //
+            $table->dropColumn('status');
+        });
     }
 };

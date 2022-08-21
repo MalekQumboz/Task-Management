@@ -34,7 +34,7 @@
                 <td>{{$task->projectNameKey}}</td>
                 <td> 
                   <span class="badge
-                   @if ($task->status=='toDo')bg-danger 
+                   @if ($task->status=='toDo')bg-warning 
                    @elseif($task->status=='inprogress') bg-success 
                    @elseif($task->status=='completed') bg-primary
                    @endif ">
@@ -83,7 +83,6 @@
     axios.put('/Task-Management/status/'+id,{
       status:statusValue,
       
-      // status:document.getElementById('3').value,
     })
     .then(function (response) {
 

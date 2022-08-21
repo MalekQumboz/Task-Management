@@ -15,6 +15,12 @@ class taskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->authorizeResource(Task::class,'task');
+    }
+
     public function index()
     {
         //

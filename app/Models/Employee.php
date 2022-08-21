@@ -13,6 +13,43 @@ class Employee extends Authenticatable
 {
     use HasFactory,HasRoles;
     
+    public function StatusKey(): Attribute{
+        $data='';
+        $date=date('Y-m-d');
+        $attendances=Attendance::where('date','=',$date)->get();
+        foreach($attendances as $attendance){
+            if($this->id ==$attendance->employee_id){
+                $data=$attendance->status;
+            }
+        }
+        
+        return new Attribute(get: fn()=> $data );
+    } 
+
+    public function EmployeeAttendanceID(): Attribute{
+        $id=0;
+        $date=date('Y-m-d');
+        $attendances=Attendance::where('date','=',$date)->get();
+        foreach($attendances as $attendance){
+            if($this->id ==$attendance->employee_id){
+                $id=$this->id;
+            }
+        }
+        
+        return new Attribute(get: fn()=> $id );
+    }   
+    public function attendanceID(): Attribute{
+        $id=0;
+        $date=date('Y-m-d');
+        $attendances=Attendance::where('date','=',$date)->get();
+        foreach($attendances as $attendance){
+            if($this->id ==$attendance->employee_id){
+                $id=$attendance->id;
+            }
+        }
+        return new Attribute(get: fn()=> $id );
+    }   
+
     public function userName():Attribute{
         return new Attribute(get: fn()=> $this->name);
     }

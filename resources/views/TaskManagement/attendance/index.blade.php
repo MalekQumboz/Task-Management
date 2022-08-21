@@ -57,11 +57,11 @@
                       </td>
                       
                     <td> <div class="btn-group">
-                      <a href="{{route('attendances.edit',$attendance->id)}}" class="btn btn-warning">
+                      {{-- <a href="{{route('attendances.edit',$attendance->id)}}" class="btn btn-warning">
                         <i class="fas fa-edit"></i>
-                      </a>
+                      </a> --}}
           
-                      <a  id="delete" onclick="confirmDelete('{{$attendances->id}}')" class="btn btn-danger">
+                      <a  id="delete" onclick="confirmDelete('{{$attendance->id}}')" class="btn btn-danger">
                         <i class="fas fa-trash"></i>
                       </a>
                       </div>
@@ -114,7 +114,7 @@
             showSwalMessage(response.data);
             document.getElementById('delete').remove();
             
-            // window.location.href="/Task-Management/attendances"
+            window.location.href="/Task-Management/attendances"
           })
           .catch(function (error) {
             // handle error
